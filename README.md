@@ -9,3 +9,10 @@ Pay:    $1723.50
 ```
 
 Variables must be edited in `report-gen.sh` to your desired values. Run `setup.sh` for an easy setup.
+
+## cron
+Run the script every other Monday to send a report for the previous two weeks (ending at the previous night)
+
+```
+0 12 * * 0 [ `expr \`date +\%s\` / 86400 \% 2` -eq 1 ] && <script>
+```

@@ -4,6 +4,10 @@ CC_EMAIL="joe@gmail.com"
 DEST_EMAIL="boss@gmail.com"
 RATE=100.0
 
+# go into script dir to write files there
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+cd $DIR
+
 source env/bin/activate
 python3 main.py --rate $RATE > report.txt
 

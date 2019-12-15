@@ -8,4 +8,4 @@ Rate:   50.00/hr
 Pay:    $1723.50
 ```
 
-Variables must be edited in `report-gen.sh` to your desired values.
+Variables must be edited in `report-gen.sh` to your desired values. Run `setup.sh` for an easy setup.

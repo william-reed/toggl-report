@@ -14,7 +14,7 @@ cd $DIR
 source env/bin/activate
 python3 main.py --rate $RATE > report.txt
 
-cat report.txt | mutt -s "Bi-weekly report for $NAME" -a report.pdf -c $CC_EMAIL -- $DEST_EMAIL
+cat report.txt | mutt -s "Two week report for $NAME" -a report.pdf -c $CC_EMAIL -- $DEST_EMAIL
 
 rm report.pdf
 rm report.txt

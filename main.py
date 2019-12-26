@@ -3,11 +3,12 @@ import os
 import requests
 import shutil
 from datetime import datetime, timedelta
+from decimal import Decimal, ROUND_HALF_UP
 from requests.auth import HTTPBasicAuth
 
 parser = argparse.ArgumentParser(description="Generate toggl report for the past two weeks ending at EOD yesterday")
 parser.add_argument("--rate", "-r", type=float, help="hourly rate", required=True)
-parser.add_argument("--additional", "-a", type=float, help="additional fees per pay period", required=False)
+parser.add_argument("--additional", "-a", type=float, help="additional fees per pay period", required=False, default=0)
 args = parser.parse_args()
 RATE = args.rate
 ADDITIONAL_FEES = args.additional
@@ -47,13 +48,22 @@ with open("report.pdf", "wb") as f:
     for chunk in report_pdf:
         f.write(chunk)
 
-hours = report["total_grand"] / 3_600_000  # convert ms to hours
+hours = Decimal(report["total_grand"]) / Decimal(3_600_000)  # convert ms to hours
+pay = Decimal(hours) * Decimal(RATE) + Decimal(ADDITIONAL_FEES)
+pay = pay.quantize(Decimal("0.01"), ROUND_HALF_UP)
 
-print("Report for {} UTC to {} UTC".format(start, end))
-print("Hours:\t{:.2f}".format(hours))
-print("Rate:\t${:.2f}/hr".format(RATE))
-if ADDITIONAL_FEES is not None:
-    print("Other:\t${:.2f}".format(ADDITIONAL_FEES))
-else:
-    ADDITIONAL_FEES = 0
-print("Pay:\t${:.2f}".format(hours * RATE + ADDITIONAL_FEES))
+print("<h3>Report for <b>{}</b> UTC to <b>{}</b> UTC</h3>".format(start, end))
+
+headers = ["Category", "Quantity"]
+rows = [
+    ["Hours", "{:.2f}".format(hours)],
+    ["Rate", "${:.2f}".format(RATE)],
+    ["Other Fees", "${:.2f}".format(ADDITIONAL_FEES)],
+    ["Pay", "${:.2f}".format(pay)]
+]
+
+print("<table>")
+print("<tr>{}</tr>".format("".join(["<th>{}</th>".format(h) for h in headers])))
+for row in rows:
+    print("<tr>{}</tr>".format("".join(["<td>{}</td>".format(r) for r in row])))
+print("</table>")

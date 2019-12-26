@@ -12,9 +12,9 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 cd $DIR
 
 source env/bin/activate
-python3 main.py --rate $RATE > report.txt
+python3 main.py --rate $RATE > report.html
 
-cat report.txt | mutt -s "Two week report for $NAME" -a report.pdf -c $CC_EMAIL -- $DEST_EMAIL
+cat report.html | mutt -e "set content_type=text/html" -s "Two week report for $NAME" -a report.pdf -c $CC_EMAIL -- $DEST_EMAIL
 
 rm report.pdf
-rm report.txt
+rm report.html
